@@ -4,6 +4,7 @@ import os.path
 import subprocess
 
 broadcastdict = {}
+deleteuser = []
 pp = Peri()
 p = {}
 HLS_URL_1 = "https://periscope-prod-eu-central-1.global.ssl.fastly.net/vidmanlive/"
@@ -23,19 +24,25 @@ while True:
 		usernames2 = list(reader)
 	usernames = usernames2[0]
 	
-	deleteuserdict = []
+	deleteuserbroadcast = []
 	for user in usernames:
 		print ("Poll ", user)
 		broadcast_history = pp.get_user_broadcast_history(username=user)
 		if broadcast_history == ['unknown']:
 			# user does not exists anymore
-			if user in broadcastdict:
-				del broadcastdict[user]
-			usernames.remove(user)
-			print ("Delete user: ", user)
-			with open("users.csv", 'w') as outfile:
-				writer = csv.writer(outfile, delimiter=',',quoting=csv.QUOTE_ALL)
-				writer.writerow(usernames)
+			# extra loop
+			if user in deleteuser:
+				if user in broadcastdict:
+					del broadcastdict[user]
+				usernames.remove(user)
+				deleteuser.remove(user)
+				print ("Delete user: ", user)
+				with open("users.csv", 'w') as outfile:
+					writer = csv.writer(outfile, delimiter=',',quoting=csv.QUOTE_ALL)
+					writer.writerow(usernames)
+			else:
+				deleteuser.append(user)
+				print ("Loop delete user")
 			break
 		if not broadcast_history:
 			# no broadcast history
@@ -71,8 +78,18 @@ while True:
 				broadcastdict[user]['state'] = 'ENDED'
 				print (user, ': ', key['id'])
 				print ("broadcast ended")
-				deleteuserdict.append(user)
+				deleteuserbroadcast.append(user)
 		livebroadcast = 0
+	#check if file still growing
+	for user in broadcastdict:
+		if broadcastdict[user]['recording'] == 1 and os.path.exists(broadcastdict[user]['filename']):
+			if broadcastdict[user]['filesize'] < file_size(broadcastdict[user]['filename']):
+				broadcastdict[user]['filesize'] = file_size(broadcastdict[user]['filename'])
+				print ("Running recording: ", broadcastdict[user]['filename'])
+			else:
+				print ("End recording for: ", broadcastdict[user]['filename'] , " :stream error")
+				p[user].terminate()
+				deleteuserbroadcast.append(user)
 	#start stop recordings
 	for user in broadcastdict:
 		if broadcastdict[user]['recording'] == 0 and broadcastdict[user]['state'] == 'RUNNING':
@@ -83,32 +100,23 @@ while True:
 			command = ['ffmpeg.exe','-i' , input,'-y','-loglevel','0', output]
 			p[user]=subprocess.Popen(command)
 			broadcastdict[user]['recording'] = 1
-			time.sleep(5)
+			time.sleep(3)
 		if broadcastdict[user]['state'] == 'ENDED' and broadcastdict[user]['recording'] == 1:
 			# end recording and delete in broadcastdict
 			print ("End recording for: ", user)
 			p[user].terminate()
-			deleteuserdict.append(user)
-	#check if file still growing
-	for user in broadcastdict:
-		if broadcastdict[user]['recording'] == 1 and os.path.exists(broadcastdict[user]['filename']):
-			if broadcastdict[user]['filesize'] < file_size(broadcastdict[user]['filename']):
-				broadcastdict[user]['filesize'] = file_size(broadcastdict[user]['filename'])
-				print ("Running recording: ", broadcastdict[user]['filename'])
-			else:
-				print ("End recording for: ", broadcastdict[user]['filename'] , " :stream error")
-				p[user].terminate()
-				deleteuserdict.append(user)
+			deleteuserbroadcast.append(user)
 	#check if new recording file is created
 	for user in broadcastdict:
 		if not os.path.exists(broadcastdict[user]['filename']):
 			time.sleep(10)
 			if not os.path.exists(broadcastdict[user]['filename']):
 				print ("No recording file created for: ", user, "file: ", broadcastdict[user]['filename'])
-				deleteuserdict.append(user)
+				p[user].terminate()
+				deleteuserbroadcast.append(user)
 	#delete entry in broadcastdict
-	for user in deleteuserdict:
+	for user in deleteuserbroadcast:
 		if user in broadcastdict:
 			del broadcastdict[user]
 
-	time.sleep(5)
+	time.sleep(1)
