@@ -97,7 +97,7 @@ while True:
 			print ("Start recording for: ", user)
 			input = broadcastdict[user]['HLS_URL']
 			output = broadcastdict[user]['filename']
-			command = ['ffmpeg.exe','-i' , input,'-y','-loglevel','0', output]
+			command = ['ffmpeg.exe','-i' , input,'-y','-acodec','mp3','-loglevel','0', output]
 			p[user]=subprocess.Popen(command)
 			broadcastdict[user]['recording'] = 1
 			time.sleep(3)
