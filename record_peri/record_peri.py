@@ -7,6 +7,7 @@ broadcastdict = {}
 deleteuser = []
 pp = Peri()
 p = {}
+p1 = {}
 HLS_URL_1 = "https://periscope-prod-eu-central-1.global.ssl.fastly.net/vidmanlive/"
 HLS_URL_3 = "/playlist.m3u8"
 livebroadcast = 0
@@ -114,9 +115,12 @@ while True:
 				print ("No recording file created for: ", user, "file: ", broadcastdict[user]['filename'])
 				p[user].terminate()
 				deleteuserbroadcast.append(user)
-	#delete entry in broadcastdict
+	#delete entry in broadcastdict and convert mkv -> mp4
 	for user in deleteuserbroadcast:
 		if user in broadcastdict:
+			input = broadcastdict[user]['filename']
+			output = input.replace('.mkv','.mp4')
+			command = ['ffmpeg.exe','-i' , input,'-y','-loglevel','0', output]
+			p1[user]=subprocess.Popen(command)
 			del broadcastdict[user]
-
 	time.sleep(1)
