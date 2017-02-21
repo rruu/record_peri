@@ -1,3 +1,14 @@
+# Record_peri.py is a simple Python script for recording live Periscope scopes of users stored in a csv file.
+# Put record_peri.py and the cvs file in the same directory. Recordings will also be stored in that directory.
+# Advice: max 10 users in csv.
+# You can run record-peri.py multiple times, when you create multiple directories, each with his own
+# record_peri.py and csv file.
+# It is possible te edit the csv file while record_peri.py is running.
+# Use Notepad++ for editing.
+#
+# Requirements:	- Python 3
+#				- ffmpeg
+
 from bs4 import BeautifulSoup
 import sys, time, os, getopt, csv
 import os.path
@@ -6,10 +17,14 @@ import json
 import urllib.request, urllib.error
 
 PERISCOPE_URL = 'https://www.periscope.tv/'
-HLS_URL_1 = "https://periscope-prod-eu-central-1.global.ssl.fastly.net/vidmanlive/"
-HLS_URL_1E = "https://periscope-prod-sa-east-1.global.ssl.fastly.net/vidmanlive/"
-HLS_URL_1N = 'https://periscope-prod-ap-northeast-1.global.ssl.fastly.net/vidmanlive/'
-HLS_URL_1U = 'https://periscope-prod-us-east-1.global.ssl.fastly.net/vidmanlive/'
+HLSURL1 = [
+	'https://periscope-prod-eu-central-1.global.ssl.fastly.net/vidmanlive/',
+	'https://periscope-prod-sa-east-1.global.ssl.fastly.net/vidmanlive/',
+	'https://periscope-prod-ap-northeast-1.global.ssl.fastly.net/vidmanlive/',
+	'https://periscope-prod-us-east-1.global.ssl.fastly.net/vidmanlive/',
+	'https://periscope-prod-ap-southeast-1.global.ssl.fastly.net/vidmanlive/',
+	'https://periscope-prod-eu-west-1.global.ssl.fastly.net/vidmanlive/'
+	]
 HLS_URL_3 = "/playlist.m3u8"
 broadcastdict = {}
 deleteuser = []
@@ -104,10 +119,7 @@ while True:
 					HLS_URL_2 = HLS_URL_2[:chunkpos]
 				broadcastdict[user] = {}
 				broadcastdict[user]['broadcast_id'] = broadcast_id
-				broadcastdict[user]['HLS_URL']= HLS_URL_1 + HLS_URL_2 + HLS_URL_3
-				broadcastdict[user]['HLS_URL_E']= HLS_URL_1E + HLS_URL_2 + HLS_URL_3
-				broadcastdict[user]['HLS_URL_N']= HLS_URL_1N + HLS_URL_2 + HLS_URL_3
-				broadcastdict[user]['HLS_URL_U']= HLS_URL_1U + HLS_URL_2 + HLS_URL_3
+				broadcastdict[user]['HLS_URL']= HLS_URL_2 + HLS_URL_3
 				broadcastdict[user]['state']= 'RUNNING'
 				broadcastdict[user]['time']= time.time()
 				broadcastdict[user]['filename']= user + '_on_peri_' + str(broadcastdict[user]['time'])[:10] + '.mkv'
@@ -132,19 +144,17 @@ while True:
 	for user in broadcastdict:
 		if broadcastdict[user]['recording'] == 0 and broadcastdict[user]['state'] == 'RUNNING':
 			print ("Start recording for: ", user)
-			rec_ffmpeg(user, broadcastdict[user]['HLS_URL'], broadcastdict[user]['filename'] )
-		if not os.path.exists(broadcastdict[user]['filename']):
-			#try second HLS URL
-			rec_ffmpeg(user, broadcastdict[user]['HLS_URL_E'], broadcastdict[user]['filename'] )
+			for key in HLSURL1:
+				URL = key + broadcastdict[user]['HLS_URL']
+				rec_ffmpeg(user, URL, broadcastdict[user]['filename'] )
+				if os.path.exists(broadcastdict[user]['filename']):
+					print ('Recording started from: ', key)
+					break
+				else:
+					p[user].terminate()
 			if not os.path.exists(broadcastdict[user]['filename']):
-				#try third HLS URL
-				rec_ffmpeg(user, broadcastdict[user]['HLS_URL_N'], broadcastdict[user]['filename'] )
-				if not os.path.exists(broadcastdict[user]['filename']):
-					#try fourth HLS URL
-					rec_ffmpeg(user, broadcastdict[user]['HLS_URL_U'], broadcastdict[user]['filename'] )
-					if not os.path.exists(broadcastdict[user]['filename']):
-						print ("No recording file created for: ", user, "file: ", broadcastdict[user]['filename'])
-						deleteuserbroadcast.append(user)
+				print ("No recording file created for: ", user, "file: ", broadcastdict[user]['filename'])
+				deleteuserbroadcast.append(user)
 		if broadcastdict[user]['state'] == 'ENDED' and broadcastdict[user]['recording'] == 1:
 			# end recording
 			print ("End recording for: ", user)
@@ -156,6 +166,6 @@ while True:
 			input = broadcastdict[user]['filename']
 			output = input.replace('.mkv','.mp4')
 			command = ['ffmpeg.exe','-i' , input,'-y','-loglevel','0', output]
-			p1[user]=subprocess.Popen(command)
+			#p1[user]=subprocess.Popen(command)
 			del broadcastdict[user]
 	time.sleep(1)

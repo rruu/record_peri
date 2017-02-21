@@ -1,6 +1,6 @@
 RECORD_PERI
 
-Record_peri.py can record Periscope live broadcasts of users stored in a csv.
+Record_peri.py is a simple Python scipt for recording Periscope live broadcasts of users stored in a csv.
 Requirements:
 - Python 3
 	https://www.python.org/
