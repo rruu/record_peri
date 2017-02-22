@@ -7,9 +7,10 @@ Requirements:
 - ffmpeg
 	https://ffmpeg.org/
 
-For users in the csv you need the Periscope account name.
-e.g. @abc123 is user abc123.
-A Twitter account name doesn't work.
+For users in the csv you need the Periscope or Twiter account name.
+e.g. @abc123 is user abc123:p.
+p = Periscope account name
+t = Twitter account name
 
 Because ffmpeg can't stop decent with a script, the mkv isn't closed correctly.
 At the end the mkv is converted to a good working mp4 file.
