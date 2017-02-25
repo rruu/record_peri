@@ -183,6 +183,7 @@ while True:
 					broadcastdict[user]['streamerror'] = 1
 	#start stop recordings
 	for user in broadcastdict:
+		usershort = user[:-2]
 		if broadcastdict[user]['recording'] == 0 and broadcastdict[user]['state'] == 'RUNNING':
 			print ('Start recording for: ', usershort)
 			for key in HLSURL1:
@@ -202,6 +203,7 @@ while True:
 			deleteuserbroadcast.append(user)
 	#end recording, delete entry in broadcastdict and convert mkv -> mp4
 	for user in deleteuserbroadcast:
+		usershort = user[:-2]
 		p[usershort].terminate()
 		if user in broadcastdict:
 			input = broadcastdict[user]['filename']
