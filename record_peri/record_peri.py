@@ -112,7 +112,7 @@ while True:
 		#Peri or Twitter user
 		if usertype == 't':
 			streamURL = get_twitter_streamURL(usershort)
-			print ('Pol Twitter account: ', usershort)
+			print ((time.strftime("%H:%M:%S")),' Polling Twitter account:', usershort)
 			if streamURL == 'unknown':
 				#user does not exists
 				live_broadcast = get_live_broadcast(usershort)
@@ -121,7 +121,7 @@ while True:
 			else:
 				live_broadcast = get_live_broadcast(streamURL)
 		else:
-			print ('Pol Peri account   : ', usershort)
+			print ((time.strftime("%H:%M:%S")),' Polling Peri account   :', usershort)
 			live_broadcast = get_live_broadcast(usershort)
 		if not live_broadcast:
 			if user in broadcastdict:
