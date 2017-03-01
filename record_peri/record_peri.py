@@ -23,11 +23,12 @@ PERISCOPE_URL = 'https://www.periscope.tv/'
 TWITTER_URL = 'https://twitter.com/'
 HLSURL1 = [
 	'https://periscope-prod-eu-central-1.global.ssl.fastly.net/vidmanlive/',
-	'https://periscope-prod-sa-east-1.global.ssl.fastly.net/vidmanlive/',
+	'https://periscope-prod-eu-west-1.global.ssl.fastly.net/vidmanlive/',
 	'https://periscope-prod-ap-northeast-1.global.ssl.fastly.net/vidmanlive/',
-	'https://periscope-prod-us-east-1.global.ssl.fastly.net/vidmanlive/',
 	'https://periscope-prod-ap-southeast-1.global.ssl.fastly.net/vidmanlive/',
-	'https://periscope-prod-eu-west-1.global.ssl.fastly.net/vidmanlive/'
+	'https://periscope-prod-us-west-1.global.ssl.fastly.net/vidmanlive/',
+	'https://periscope-prod-us-east-1.global.ssl.fastly.net/vidmanlive/',
+	'https://periscope-prod-sa-east-1.global.ssl.fastly.net/vidmanlive/'
 	]
 HLS_URL_3 = "/playlist.m3u8"
 broadcastdict = {}
