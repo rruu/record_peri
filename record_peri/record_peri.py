@@ -41,7 +41,7 @@ def file_size(fname):
         statinfo = os.stat(fname)
         return statinfo.st_size
 
-def get_live_broadcast(user):
+def get_live_broadcast(user, usertype):
 	req = urllib.request.Request(PERISCOPE_URL + user)
 	try:
 		response = urllib.request.urlopen(req)
@@ -61,12 +61,14 @@ def get_live_broadcast(user):
 				else:
 					live_broadcast = {}	
 	except urllib.error.URLError as e:
-		print('URLError: ',e.reason)
 		res = e.reason
-		if res == 'Not Found':
+		if res == 'Not Found' and usertype == 'p':
 			live_broadcast = {'user_id': ['unknown']}
+		elif res == 'Not Found' and usertype == 't':
+			live_broadcast = {}
 		else:
 			#unknown error
+			print('URLError: ',e.reason)
 			live_broadcast = {'user_id': ['skip']}
 	return live_broadcast
 	
@@ -116,14 +118,14 @@ while True:
 			print ((time.strftime("%H:%M:%S")),' Polling Twitter account:', usershort)
 			if streamURL == 'unknown':
 				#user does not exists
-				live_broadcast = get_live_broadcast(usershort)
+				live_broadcast = {'user_id': ['unknown']}
 			elif streamURL == 'nothing':
 				live_broadcast = {}
 			else:
-				live_broadcast = get_live_broadcast(streamURL)
+				live_broadcast = get_live_broadcast(streamURL, usertype)
 		else:
 			print ((time.strftime("%H:%M:%S")),' Polling Peri account   :', usershort)
-			live_broadcast = get_live_broadcast(usershort)
+			live_broadcast = get_live_broadcast(usershort, usertype)
 		if not live_broadcast:
 			if user in broadcastdict:
 				print (usershort, ': broadcast ended')
@@ -200,7 +202,7 @@ while True:
 				deleteuserbroadcast.append(user)
 		if broadcastdict[user]['state'] == 'ENDED' and broadcastdict[user]['recording'] == 1:
 			# end recording
-			print ('End recording for: ', user)
+			print ('End recording for: ', usershort)
 			deleteuserbroadcast.append(user)
 	#end recording, delete entry in broadcastdict and convert mkv -> mp4
 	for user in deleteuserbroadcast:
