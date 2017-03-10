@@ -21,16 +21,23 @@ import urllib.request, urllib.error
 
 PERISCOPE_URL = 'https://www.periscope.tv/'
 TWITTER_URL = 'https://twitter.com/'
-HLSURL1 = [
-	'https://periscope-prod-eu-central-1.global.ssl.fastly.net/vidmanlive/',
-	'https://periscope-prod-eu-west-1.global.ssl.fastly.net/vidmanlive/',
-	'https://periscope-prod-ap-northeast-1.global.ssl.fastly.net/vidmanlive/',
-	'https://periscope-prod-ap-southeast-1.global.ssl.fastly.net/vidmanlive/',
-	'https://periscope-prod-us-west-1.global.ssl.fastly.net/vidmanlive/',
-	'https://periscope-prod-us-east-1.global.ssl.fastly.net/vidmanlive/',
-	'https://periscope-prod-sa-east-1.global.ssl.fastly.net/vidmanlive/'
-	]
-HLS_URL_3 = "/playlist.m3u8"
+HLSURL1 = {
+	'https://prod-video-eu-central-1.periscope.tv/':'/live/eu-central-1/playlist.m3u8',
+	'https://prod-video-eu-west-1.periscope.tv/':'/live/eu-west-1/playlist.m3u8',
+	'https://prod-video-ap-northeast-1.periscope.tv/':'/live/ap-northeast-1/playlist.m3u8',
+	'https://prod-video-ap-southeast-1.periscope.tv/':'/live/ap-southeast-1/playlist.m3u8',
+	'https://prod-video-us-west-1.periscope.tv/':'/live/us-west-1/playlist.m3u8',
+	'https://prod-video-us-east-1.periscope.tv/':'/live/us-east-1/playlist.m3u8',
+	'https://prod-video-sa-east-1.periscope.tv/':'/live/sa-east-1/playlist.m3u8',
+	'https://periscope-prod-eu-central-1.global.ssl.fastly.net/vidmanlive/':'/playlist.m3u8',
+	'https://periscope-prod-eu-west-1.global.ssl.fastly.net/vidmanlive/':'/playlist.m3u8',
+	'https://periscope-prod-ap-northeast-1.global.ssl.fastly.net/vidmanlive/':'/playlist.m3u8',
+	'https://periscope-prod-ap-southeast-1.global.ssl.fastly.net/vidmanlive/':'/playlist.m3u8',
+	'https://periscope-prod-us-west-1.global.ssl.fastly.net/vidmanlive/':'/playlist.m3u8',
+	'https://periscope-prod-us-east-1.global.ssl.fastly.net/vidmanlive/':'/playlist.m3u8',
+	'https://periscope-prod-sa-east-1.global.ssl.fastly.net/vidmanlive/':'/playlist.m3u8'
+	
+	}
 broadcastdict = {}
 deleteuser = []
 p = {}
@@ -169,7 +176,7 @@ while True:
 					HLS_URL_2 = HLS_URL_2[:chunkpos]
 				broadcastdict[user] = {}
 				broadcastdict[user]['broadcast_id'] = broadcast_id
-				broadcastdict[user]['HLS_URL']= HLS_URL_2 + HLS_URL_3
+				broadcastdict[user]['HLS_URL2']= HLS_URL_2
 				broadcastdict[user]['state']= 'RUNNING'
 				broadcastdict[user]['time']= time.time()
 				broadcastdict[user]['filename']= usershort + '_on_peri_' + str(broadcastdict[user]['time'])[:10] + '.mkv'
@@ -204,7 +211,7 @@ while True:
 		if broadcastdict[user]['recording'] == 0 and broadcastdict[user]['state'] == 'RUNNING':
 			print ('Start recording for: ', usershort)
 			for key in HLSURL1:
-				URL = key + broadcastdict[user]['HLS_URL']
+				URL = key + broadcastdict[user]['HLS_URL2'] + HLSURL1[key]
 				rec_ffmpeg(usershort, URL, broadcastdict[user]['filename'] )
 				time.sleep(0.5)
 				if os.path.exists(broadcastdict[user]['filename']):
