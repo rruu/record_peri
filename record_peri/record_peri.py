@@ -111,7 +111,7 @@ def rec_ffmpeg(usershort, input, output):
 def convert2mp4(usershort, input):
 	output = input.replace('.mkv','.mp4')
 	command = ['ffmpeg.exe','-i' , input,'-y','-loglevel','0', output]
-	#p1[user]=subprocess.Popen(command)
+	p1[user]=subprocess.Popen(command)
 
 while True:
 	#read users.csv into list every loop, so you can edit csv file during run.
