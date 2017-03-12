@@ -107,15 +107,19 @@ def rec_ffmpeg(usershort, input, output):
 	p[usershort]=subprocess.Popen(command)
 	broadcastdict[user]['recording'] = 1
 	time.sleep(1)
+	
+def convert2mp4(usershort, input):
+	output = input.replace('.mkv','.mp4')
+	command = ['ffmpeg.exe','-i' , input,'-y','-loglevel','0', output]
+	#p1[user]=subprocess.Popen(command)
 
 while True:
 	#read users.csv into list every loop, so you can edit csv file during run.
-	print ('*-----------------------------------------*')
+	print ('*--------------------------------------------------------------*')
 	with open('users.csv', 'r') as readfile:
 		reader = csv.reader(readfile, delimiter=',')
 		usernames2 = list(reader)
 	usernames = usernames2[0]
-	
 	deleteuserbroadcast = []
 	for user in usernames:
 		usershort = user[:-2]
@@ -136,9 +140,10 @@ while True:
 			live_broadcast = get_live_broadcast(usershort, usertype)
 		if not live_broadcast:
 			if user in broadcastdict:
-				# delay of 30 seconds
-				if not broadcastdict[user]['end_time'] == 0:
+				# delay of 30 seconds before final ending.
+				if broadcastdict[user]['end_time'] == 0:
 					#first time
+					print (usershort, ': no broadcast found.')
 					broadcastdict[user]['end_time'] = time.time()
 				else:
 					if (time.time() - broadcastdict[user]['end_time']) > 30:
@@ -187,18 +192,14 @@ while True:
 	#check recording file
 	for user in broadcastdict:
 		usershort = user[:-2]
-		if broadcastdict[user]['recording'] == 1 and os.path.exists(broadcastdict[user]['filename']):
+		if broadcastdict[user]['recording'] == 1 and os.path.exists(broadcastdict[user]['filename']) and broadcastdict[user]['state'] == 'RUNNING':
 			if broadcastdict[user]['filesize'] < file_size(broadcastdict[user]['filename']):
 				broadcastdict[user]['filesize'] = file_size(broadcastdict[user]['filename'])
 				print ('Running ',round(time.time()- broadcastdict[user]['time']), 'seconds: ', broadcastdict[user]['filename'])
 			else:
 				print ('Restart recording for: ', broadcastdict[user]['filename'] , ' :stream error')
 				p[usershort].terminate()
-				#convert to mp4
-				input = broadcastdict[user]['filename']
-				output = input.replace('.mkv','.mp4')
-				command = ['ffmpeg.exe','-i' , input,'-y','-loglevel','0', output]
-				p1[user]=subprocess.Popen(command)
+				convert2mp4(usershort,broadcastdict[user]['filename'])
 				#start new recording
 				URL = broadcastdict[user]['HLS_URL']
 				broadcastdict[user]['filename']= usershort + '_on_peri_' + str(time.time())[:10] + '.mkv'
@@ -232,9 +233,6 @@ while True:
 		usershort = user[:-2]
 		p[usershort].terminate()
 		if user in broadcastdict:
-			input = broadcastdict[user]['filename']
-			output = input.replace('.mkv','.mp4')
-			command = ['ffmpeg.exe','-i' , input,'-y','-loglevel','0', output]
-			p1[user]=subprocess.Popen(command)
+			convert2mp4(usershort, broadcastdict[user]['filename'])
 			del broadcastdict[user]
 	time.sleep(1)
