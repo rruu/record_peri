@@ -1,10 +1,32 @@
+#The MIT License (MIT)
+#
+#Copyright (c) 2017 Peterfdej
+#
+#Permission is hereby granted, free of charge, to any person obtaining a copy
+#of this software and associated documentation files (the "Software"), to deal
+#in the Software without restriction, including without limitation the rights
+#to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+#copies of the Software, and to permit persons to whom the Software is
+#furnished to do so, subject to the following conditions:
+#
+#The above copyright notice and this permission notice shall be included in
+#all copies or substantial portions of the Software.
+#
+#THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+#IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+#FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+#AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+#LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+#OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
+#THE SOFTWARE.
+
 # Record_peri.py is a simple Python script for recording live Periscope scopes of users stored in a csv file.
 # Put record_peri.py and the cvs file in the same directory. Recordings will also be stored in that directory.
 # Advice: max 10 users in csv.
 # You can run record-peri.py multiple times, when you create multiple directories, each with his own
 # record_peri.py and csv file.
 # It is possible te edit the csv file while record_peri.py is running.
-# Use Notepad++ for editing.
+# In Windows use Notepad++ for editing.
 # Format csv: abc123:p,johndoe:p,xyzxx:t
 # p = Periscope account name (user uses Pericope to stream)
 # t = Twitter account name (user uses Twitter to stream)
@@ -188,7 +210,10 @@ while True:
 				broadcastdict[user]['filesize']= 0
 				broadcastdict[user]['recording']= 0
 			#reset end_time
-			broadcastdict[user]['end_time']= 0
+			if broadcastdict[user]['broadcast_id'] == live_broadcast['id']:
+				broadcastdict[user]['end_time']= 0
+			else:
+				deleteuserbroadcast.append(user)
 	#check recording file
 	for user in broadcastdict:
 		usershort = user[:-2]
@@ -197,7 +222,7 @@ while True:
 				broadcastdict[user]['filesize'] = file_size(broadcastdict[user]['filename'])
 				print ('Running ',round(time.time()- broadcastdict[user]['time']), 'seconds: ', broadcastdict[user]['filename'])
 			else:
-				print ('Restart recording for: ', broadcastdict[user]['filename'] , ' :stream error')
+				print ('Restart recording for: ', broadcastdict[user]['filename'] , ' :stream, record error')
 				p[usershort].terminate()
 				convert2mp4(usershort,broadcastdict[user]['filename'])
 				#start new recording
