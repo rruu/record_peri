@@ -116,14 +116,14 @@ def get_twitter_streamURL(user):
 	return streamURL
 	
 def rec_ffmpeg(user, input, output):
-	command = ['ffmpeg.exe','-i' , input,'-y','-acodec','mp3','-loglevel','0', output]
+	command = ['ffmpeg','-i' , input,'-y','-acodec','mp3','-loglevel','0', output]
 	p[user]=subprocess.Popen(command)
 	broadcastdict[user]['recording'] = 1
 	time.sleep(1)
 	
 def convert2mp4(input):
 	output = input.replace('.mkv','.mp4')
-	command = ['ffmpeg.exe','-i' , input,'-y','-loglevel','0', output]
+	command = ['ffmpeg','-i' , input,'-y','-loglevel','0', output]
 	p1[user]=subprocess.Popen(command)
 
 while True:
