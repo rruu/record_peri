@@ -45,12 +45,19 @@ PERISCOPE_URL = 'https://www.periscope.tv/'
 TWITTER_URL = 'https://twitter.com/'
 HLSURL1 = {
 	'https://prod-video-eu-central-1.periscope.tv/':'/live/eu-central-1/playlist.m3u8',
+	'https://prod-video-eu-central-1.pscp.tv/':'/live/eu-central-1/playlist.m3u8',
 	'https://prod-video-eu-west-1.periscope.tv/':'/live/eu-west-1/playlist.m3u8',
+	'https://prod-video-eu-west-1.pscp.tv/':'/live/eu-west-1/playlist.m3u8',
 	'https://prod-video-ap-northeast-1.periscope.tv/':'/live/ap-northeast-1/playlist.m3u8',
+	'https://prod-video-ap-northeast-1.pscp.tv/':'/live/ap-northeast-1/playlist.m3u8',
 	'https://prod-video-ap-southeast-1.periscope.tv/':'/live/ap-southeast-1/playlist.m3u8',
+	'https://prod-video-ap-southeast-1.pscp.tv/':'/live/ap-southeast-1/playlist.m3u8',
 	'https://prod-video-us-west-1.periscope.tv/':'/live/us-west-1/playlist.m3u8',
+	'https://prod-video-us-west-1.pscp.tv/':'/live/us-west-1/playlist.m3u8',
 	'https://prod-video-us-east-1.periscope.tv/':'/live/us-east-1/playlist.m3u8',
-	'https://prod-video-sa-east-1.periscope.tv/':'/live/sa-east-1/playlist.m3u8'
+	'https://prod-video-us-east-1.pscp.tv/':'/live/us-east-1/playlist.m3u8',
+	'https://prod-video-sa-east-1.periscope.tv/':'/live/sa-east-1/playlist.m3u8',
+	'https://prod-video-sa-east-1.pscp.tv/':'/live/sa-east-1/playlist.m3u8'
 	}
 broadcastdict = {}
 deleteuser = []
