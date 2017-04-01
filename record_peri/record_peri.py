@@ -44,19 +44,12 @@ import urllib.request, urllib.error
 PERISCOPE_URL = 'https://www.periscope.tv/'
 TWITTER_URL = 'https://twitter.com/'
 HLSURL1 = {
-	'https://prod-video-eu-central-1.periscope.tv/':'/live/eu-central-1/playlist.m3u8',
 	'https://prod-video-eu-central-1.pscp.tv/':'/live/eu-central-1/playlist.m3u8',
-	'https://prod-video-eu-west-1.periscope.tv/':'/live/eu-west-1/playlist.m3u8',
 	'https://prod-video-eu-west-1.pscp.tv/':'/live/eu-west-1/playlist.m3u8',
-	'https://prod-video-ap-northeast-1.periscope.tv/':'/live/ap-northeast-1/playlist.m3u8',
 	'https://prod-video-ap-northeast-1.pscp.tv/':'/live/ap-northeast-1/playlist.m3u8',
-	'https://prod-video-ap-southeast-1.periscope.tv/':'/live/ap-southeast-1/playlist.m3u8',
 	'https://prod-video-ap-southeast-1.pscp.tv/':'/live/ap-southeast-1/playlist.m3u8',
-	'https://prod-video-us-west-1.periscope.tv/':'/live/us-west-1/playlist.m3u8',
 	'https://prod-video-us-west-1.pscp.tv/':'/live/us-west-1/playlist.m3u8',
-	'https://prod-video-us-east-1.periscope.tv/':'/live/us-east-1/playlist.m3u8',
 	'https://prod-video-us-east-1.pscp.tv/':'/live/us-east-1/playlist.m3u8',
-	'https://prod-video-sa-east-1.periscope.tv/':'/live/sa-east-1/playlist.m3u8',
 	'https://prod-video-sa-east-1.pscp.tv/':'/live/sa-east-1/playlist.m3u8'
 	}
 broadcastdict = {}
@@ -179,7 +172,7 @@ while True:
 				if user not in broadcastdict:
 					print ('New scope of user: ', usershort)
 					broadcast_id = live_broadcast['id']
-					HLS_URL_2 = live_broadcast['image_url'][24:]
+					HLS_URL_2 = live_broadcast['image_url'][31:]
 					if 'chunk' in HLS_URL_2:
 						chunkpos = HLS_URL_2.find('chunk') - 1
 						HLS_URL_2 = HLS_URL_2[:chunkpos]
